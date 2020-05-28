@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.mapper.userMapper">
+
+	<select id ="login" parameterType="String" resultType ="UserVO">
+		select userId,password,name,phone,email,join_date,auth
+		from tbl_member
+		where userId = #{userId} and password = #{userPw}
+	</select>
+	
+	<insert id ="insert">
+		insert into tbl_member(userId,password,name,phone,email)
+		values(#{userId},#{userPw},#{name},#{phoneNum},#{email})
+	</insert>
+	
+	<update id = "keepLogin">
+		update tbl_member set sessionKey = #{sessionId}, sessionLimit = #{next} where userId = #{userId}
+	</update>
+	
+	<select id = "checkUserWithSessionKey" resultType="UserVO">
+		select * from tbl_member where sessionKey = #{value} and sessionLimit > now()
+	</select>
+
+</mapper>

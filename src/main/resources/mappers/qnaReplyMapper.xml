@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.mapper.qnaReplyMapper">
+
+	<!-- QNA Reply 등록 -->
+	<insert id="insert">
+		insert into tbl_qna_reply(rno,bno,content,writer)
+		values(seq_reply.nextval,#{bno},#{content},#{writer})
+	</insert>
+	
+	<!--  Qna Reply read -->
+	<select id = "getReplyList" resultType="qnaReplyVO">
+		select rno,bno,content,writer
+		from tbl_qna_reply
+		where bno = #{bno}
+	</select>
+	<!-- select는 resultType을 명시하여야 한다 -->
+	
+	
+	<!-- Qna Reply delete -->
+	<delete id="delete">
+		delete from tbl_qna_reply
+		where rno = #{rno}
+	</delete>
+	
+	<!-- Qna Reply update -->
+	<update id="update">
+		alter table tbl_qna_reply
+		set content = #{content}
+		where rno = #{rno}
+	</update>
+	
+	
+	<!-- QNA list-->
+	<select id ="list" resultType ="qnaReplyVO">
+		select rno,bno,content,writer,replyDate
+		from tbl_qna_reply
+		where bno = #{bno}
+		order by rno desc
+	</select>
+	
+	<select id ="count" resultType="int">
+		select count(bno) from tbl_qna_reply where bno = #{bno}
+	</select>
+	
+	<select id="listPage" resultType="qnaReplyVO">
+	<![CDATA[
+			select 
+				*
+			from tbl_qna_reply 
+			where 
+			]]>
+	
+		<![CDATA[
+				rownum <=#{pageNum} * #{amount}
+				)
+			where rn > (#{pageNum}-1) * #{amount}
+		]]>	
+	</select>
+	
+
+</mapper>

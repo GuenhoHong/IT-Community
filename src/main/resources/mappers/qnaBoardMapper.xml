@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.mapper.qnaBoardMapper">
+
+	<!--  QnaBoard 게시글 작성 하기 -->
+	<insert id = "insert">
+		INSERT INTO TBL_QNABOARD(NO,TITLE,CONTENT,WRITER)
+		VALUES(SEQ_QNA_NO.nextval,#{title},#{content},#{writer})
+	</insert>
+	
+	<!-- 게시글 상세 보기 -->
+	<select id = "select" parameterType="int" resultType="QnaBoardVO">
+		SELECT * FROM TBL_QNABOARD WHERE NO = #{no}
+	</select>
+	
+	<!--  Qna Board 게시글 수정 처리 -->
+	<update id ="update">
+		UPDATE TBL_QNABOARD
+		SET TITLE = #{title},
+		content = #{content}
+		WHERE NO = #{no}
+	</update>
+	
+	<!-- 게시글 삭제 처리 -->
+	<delete id ="delete">
+		DELETE FROM TBL_QNABOARD
+		WHERE NO = #{no}
+	</delete>
+	
+	<!-- 게시글 조회수 증가 처리 -->
+	<update id ="hit">
+		update tbl_qnaboard
+		set hit = hit + 1
+		where no = #{no}
+	</update>
+	
+	<!-- sql의 일부를 별도로 보관하고 필요한 경우에 include -->
+	<sql id="criteriaQna">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item='type' collection="qnaTypeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							TITLE like '%'||#{qnaKeyWord}||'%'
+						</when>
+						<when test="type == 'C'.toString()">
+							CONTENT like '%'||#{qnaKeyWord}||'%'
+						</when>
+						<when test="type == 'W'.toString()">
+							WRITER like '%'||#{qnaKeyWord}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+	
+	<!-- 게시글 목록 조회하기 -->
+	<select id="list" resultType="QnaBoardVO">
+		<![CDATA[
+			select 
+				NO,TITLE,CONTENT,REGDATE,HIT,writer
+			from (
+				select /*+INDEX_DESC(tbl_qnaboard PK_tbl_qna) */
+				rownum rn, no,title,content,regdate,hit,writer from TBL_qnaboard
+			where 
+			]]>
+		<include refid = "criteriaQna"></include>
+		<![CDATA[
+				rownum <=#{pageNum} * #{amount}
+				)
+			where rn > (#{pageNum}-1) * #{amount}
+		]]>	
+		
+	</select>
+	
+	<!-- 게시글 총 개수 구하기 -->
+	<select id = "totalCount" resultType ="int">
+		select count(*) from tbl_qnaBoard where
+		<include refid = "criteriaQna"></include> 
+		no>0
+	</select>
+	
+</mapper>

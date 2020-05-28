@@ -1,0 +1,36 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.jumbotron {
+	background-image: url('../images/skhu.image.jpg');
+	background-size: cover;
+	text-shadow: black 0.2em 0.2em 0.2em;
+	color: white;
+}
+
+blockquote {
+	background: #f9f9f9;
+	border-left: 10px solid #cccccc;
+	margin: 1.5em 10px;
+	padding: 0.5em 10px;
+}
+
+blockquote:before {
+	color: #cccccc;
+	content: open-quote;
+	font-size: 3em;
+	line-height: 0.1em;
+	margin-left: 0.25em;
+	vertical-align: -0.4em;
+}
+
+blockquote:after {
+	color: #cccccc;
+	content: close-quote;
+	font-size: 3em;
+	line-height: 0.1em;
+	margin-left: 0.25em;
+	vertical-align: -0.4em;
+}
